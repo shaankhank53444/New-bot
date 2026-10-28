@@ -11,10 +11,7 @@ const roniTriggers = [
     "জানু",
     "বেবি",
     "wifey",
-    "aliya",
-    "king",
-    "mrking",
-    "roni"
+    "aliya"
 ];
 
 const baseApiUrl = "https://baby-one-zeta.vercel.app";
@@ -22,11 +19,11 @@ const baseApiUrl = "https://baby-one-zeta.vercel.app";
 module.exports.config = {
     name: "baby",
     aliases: ["bby", "bbu", "jan", "janu", "wifey", "bot", "aliya"],
-    version: "26.0",
+    version: "26.8",
     author: "Roni",
     countDown: 0,
     role: 0,
-    description: "Smartest response bot API integrated",
+    description: "Smartest response bot API integrated with fast performance",
     category: "chat",
     guide: {
         en: "{pn} [anyMessage]"
@@ -38,8 +35,8 @@ const makeBold = (text) => {
     const fonts = {
         a: "𝗮", b: "𝗯", c: "𝗰", d: "𝗱", e: "𝗲", f: "𝗳", g: "𝗴", h: "𝗵", i: "𝗶", j: "𝗷", k: "𝗸", l: "𝗹", m: "𝗺",
         n: "𝗻", o: "𝗼", p: "𝗽", q: "𝗾", r: "𝗿", s: "𝘀", t: "𝘁", u: "𝘂", v: "𝘃", w: "𝘄", x: "𝘅", y: "𝘆", z: "𝘇",
-        A: "𝗔", B: "𝗕", C: "Ｃ", D: "𝗗", E: "𝗘", F: "𝗙", G: "𝗚", H: "𝗛", I: "𝗜", J: "𝗝", K: "Ｋ", L: "𝗟", M: "𝗠",
-        N: "𝗡", O: "𝗢", P: "𝗣", Q: "Q", R: "𝗥", S: "𝗦", T: "𝗧", U: "𝗨", V: "𝗩", W: "𝗪", X: "𝘫", Y: "𝗬", Z: "𝗭",
+        A: "𝗔", B: "𝗕", C: "𝗖", D: "𝗗", E: "𝗘", F: "𝗙", G: "𝗚", H: "𝗛", I: "𝗜", J: "𝗝", K: "𝗞", L: "𝗟", M: "𝗠",
+        N: "𝗡", O: "𝗢", P: "𝗣", Q: "𝗤", R: "𝗥", S: "𝗦", T: "𝗧", U: "𝗨", V: "𝗩", W: "𝗪", X: "𝗫", Y: "𝗬", Z: "𝗭",
         "0": "𝟬", "1": "𝟭", "2": "𝟮", "3": "𝟯", "4": "𝟰", "5": "𝟱", "6": "𝟲", "7": "𝟳", "8": "𝟴", "9": "𝟵"
     };
     return text.split("").map(char => fonts[char] || char).join("");
@@ -52,7 +49,8 @@ const handleMediaCheck = (attachments) => {
             video: ["Mb nai bby pore dio", "ajaira sop video😒", "1 ta kidni de then dekhmu"],
             audio: ["Sent 100000000tk to bkash then I will listen", "aj boyra bole kisu sunte parlam na😤"],
             photo: ["iss amk picture diye potanor chesta 🌚😘", "pic dekhe ki hobe jokon mb e nai"],
-            animated_image: ["iss gif pic diye potanor chesta 🌚😘", "pic dekhe ki hobe jokon mb e nai"]
+            animated_image: ["iss gif pic diye potanor chesta 🌚😘", "pic dekhe ki hobe jokon mb e nai"],
+            sticker: ["ki re sticker dakhass keno 😾", "sticker na mukh diye kotha bolo 😸", "sticker pathiye ki bhabchho? 😼"]
         };
         if (replies[type]) {
             const list = replies[type];
@@ -64,7 +62,7 @@ const handleMediaCheck = (attachments) => {
 
 const fetchBotResponse = async (text) => {
     try {
-        const res = await axios.post(`${baseApiUrl}/api/aliya`, { text: text });
+        const res = await axios.post(`${baseApiUrl}/api/aliya`, { text: text }, { timeout: 8000 });
         if (res.data && res.data.message) {
             return res.data.message;
         }
@@ -89,19 +87,21 @@ module.exports.onStart = async ({ api, event, args }) => {
     }
     
     const rawMsg = args ? args.join(" ") : "";
-    const msg = rawMsg.toLowerCase().trim();
-
+    
     try {
+        api.setMessageReaction("🌸", event.messageID, () => {}, true);
+
         if (!args[0]) {
             const ran = ["Bolo baby", "I love you", "Welcome to Aliya Bot! 😎"];
             return api.sendMessage(makeBold(ran[Math.floor(Math.random() * ran.length)]), event.threadID, event.messageID);
         }
 
+        const msg = rawMsg.toLowerCase().trim();
         if (msg === "list" || msg === "datacheck") {
             try {
-                const res = await axios.get(`${baseApiUrl}/api/jan/stats`);
+                const res = await axios.get(`${baseApiUrl}/api/jan/stats`, { timeout: 5000 });
                 if (res.data && res.data.success) {
-                    const stats = `🐤 | Total Triggers = ${res.data.totalTeach}\n♻️ | Total Responses = ${res.data.totalResponses}\n💾 | Data Size = ${res.data.dataSize}`;
+                    const stats = `🌸✨ ════════════════ ✨🌸\n  🌷 𝗧𝗼𝘁𝗮𝗹 𝗧𝗿𝗶𝗴𝗴𝗲𝗿𝘀: ${res.data.totalTeach} 🌷\n  🌻 𝗧𝗼𝘁𝗮𝗹 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲𝘀: ${res.data.totalResponses} 🌻\n  🌺 𝗗𝗮𝘁𝗮 𝗦𝗶𝘇𝗲: ${res.data.dataSize} 🌺\n🌸✨ ════════════════ ✨🌸`;
                     return api.sendMessage(makeBold(stats), event.threadID, event.messageID);
                 }
             } catch (e) {
@@ -139,8 +139,11 @@ module.exports.onReply = async ({ api, event }) => {
         
         let replyMsg = mediaReply;
         if (!replyMsg) {
-            if (!text.trim()) return;
             replyMsg = await fetchBotResponse(text);
+        }
+
+        if (!replyMsg) {
+            replyMsg = await fetchBotResponse("fallback");
         }
 
         api.sendMessage(makeBold(replyMsg), event.threadID, (err, info) => {
@@ -161,28 +164,26 @@ module.exports.onReply = async ({ api, event }) => {
 module.exports.onChat = async ({ api, event }) => {
     try {
         if (module.exports.config.author !== "Roni") return;
-
-        // Prevent double response when replying to a message
         if (event.type === "message_reply") return;
 
-        const body = event.body ? event.body.toLowerCase() : "";
+        const body = event.body ? event.body.toLowerCase().trim() : "";
         const prefix = global.GoatBot?.config?.prefix || "!";
         
-        // Skip command prefix
         if (body.startsWith(prefix)) return;
 
-        const hasTrigger = roniTriggers.some(word => body.startsWith(word));
+        let matchedTrigger = null;
+        let queryText = "";
 
-        if (hasTrigger) {
-            api.setMessageReaction("🪽", event.messageID, () => {}, true);
-
-            let text = event.body || "";
-            for (const word of roniTriggers) {
-                if (body.startsWith(word)) {
-                    text = event.body.substring(word.length).trim();
-                    break;
-                }
+        for (const trigger of roniTriggers) {
+            if (body === trigger || body.startsWith(trigger + " ")) {
+                matchedTrigger = trigger;
+                queryText = event.body.substring(trigger.length).trim();
+                break;
             }
+        }
+
+        if (matchedTrigger) {
+            api.setMessageReaction("🌸", event.messageID, () => {}, true);
 
             const mediaReply = handleMediaCheck(event.attachments);
             if (mediaReply) {
@@ -198,24 +199,24 @@ module.exports.onChat = async ({ api, event }) => {
                 }, event.messageID);
             }
 
-            if (!text) {
+            if (!queryText) {
                 const randomMessage = [
-                    "আমাকে ডাকলে ,আমি কিন্তূ কিস করে দেবো😘 ",
-                    "গোলাপ ফুল এর জায়গায় আমি দিলাম তোমায় মেসেজ",
-                    "বলো কি বলবা, সবার সামনে বলবা নাকি?🤭🤏",
-                    "𝗜 𝗹𝗼𝘃𝗲 𝘆𝗼𝘂__😘😘",
-                    "𝗕𝗯𝘆 𝗕𝗯𝘆 না করে আমার বস মানে, Roni ,Roni ও তো করতে পারো😑?",
-                    "আমার সোনার বাংলা, তারপরে লাইন কি? 🙈",
-                    "🍺 এই নাও জুস খাও..!𝗕𝗯𝘆 বলতে বলতে হাপায় গেছো না 🥲",
-                    "হটাৎ আমাকে মনে পড়লো 🙄",
-                    "𝗔𝘀𝘀𝗮𝗹𝗮𝗺𝘂𝗹𝗮𝗶𝗸𝘂𝗺 🐤🐤",
-                    "আমি তোমার সিনিয়র আপু ওকে 😼সম্মান দেও🙁",
-                    "খাওয়া দাওয়া করসো 🙄",
-                    "এত কাছেও এসো না,প্রেম এ পরে যাবো তো 🙈",
-                    "𝗛𝗲𝘆 𝗛𝗮𝗻𝗱𝘀𝗼𝗺𝗲 বলো 😁😁",
-                    "আরে Bolo আমার জান, কেমন আসো? 😚",
-                    "oi mama ar dakis na pilis 😿",
-                    "amr JaNu lagbe,Tumi ki single aso?"
+                    "🌸 আমাকে ডাকলে ,আমি কিন্তূ কিস করে দেবো😘 🌸",
+                    "🌷 গোলাপ ফুল এর জায়গায় আমি দিলাম তোমায় মেসেজ 🌷",
+                    "🌻 বলো কি বলবা, সবার সামনে বলবা নাকি?🤭🤏 🌻",
+                    "🌺 𝗜 𝗹𝗼𝘃𝗲 𝘆𝗼𝘂__😘😘 🌺",
+                    "🌹 𝗕𝗯𝘆 𝗕𝗯𝘆 না করে আমার বস মানে, Roni ,Roni ও তো করতে পারো😑? 🌹",
+                    "🌷 আমার সোনার বাংলা, তারপরে লাইন কি? 🙈 🌷",
+                    "🌸 🍺 এই নাও জুস খাও..!𝗕𝗯𝘆 বলতে বলতে হাপায় গেছো না 🥲 🌸",
+                    "🌻 হটাৎ আমাকে মনে পড়লো 🙄 🌻",
+                    "🌺 𝗔𝘀𝘀𝗮𝗹𝗮𝗺𝘂𝗹𝗮𝗶𝗸𝘂𝗺 🐤🐤 🌺",
+                    "🌹 আমি তোমার সিনিয়র আপু ওকে 😼সম্মান দেও🙁 🌹",
+                    "🌷 খাওয়া দাওয়া করসো 🙄 🌷",
+                    "🌸 এত কাছেও এসো না,প্রেম এ পরে যাবো তো 🙈 🌸",
+                    "🌻 𝗛𝗲𝘆 𝗛𝗮𝗻𝗱𝘀𝗼𝗺𝗲 বলো 😁😁 🌻",
+                    "🌺 আরে Bolo আমার জান, কেমন আসো? 😚 🌺",
+                    "🌹 oi mama ar dakis na pilis 😿 🌹",
+                    "🌷 amr JaNu lagbe,Tumi ki single aso? 🌷"
                 ];
                 const babyMessage = randomMessage[Math.floor(Math.random() * randomMessage.length)];
                 return api.sendMessage(makeBold(babyMessage), event.threadID, (err, info) => {
@@ -230,7 +231,7 @@ module.exports.onChat = async ({ api, event }) => {
                 }, event.messageID);
             }
 
-            const replyMsg = await fetchBotResponse(text);
+            const replyMsg = await fetchBotResponse(queryText);
 
             return api.sendMessage(makeBold(replyMsg), event.threadID, (err, info) => {
                 if (!err && info) {
@@ -247,4 +248,4 @@ module.exports.onChat = async ({ api, event }) => {
         console.error(err);
     }
 };
-
+    
