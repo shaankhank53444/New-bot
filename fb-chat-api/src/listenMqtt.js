@@ -490,7 +490,7 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
 
             if (resData[resData.length - 1].successful_results === 0) throw { error: "forcedFetch: there was no successful_results", res: resData };
 
-           var fetchData = resData[0].o0.data.message;
+            var fetchData = resData[0].o0.data.message;
 
             if (utils.getType(fetchData) == "Object") {
               utils.log("forcedFetch", fetchData);
