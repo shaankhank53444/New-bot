@@ -1,147 +1,113 @@
-const axios = require("axios");
-
-async function toFont(text, id = 22) {
-  try {
-    const GITHUB_RAW = "https://raw.githubusercontent.com/masterjiraya890-svg/Aliya-Official--v4/main/ApiUrl.json";
-    const rawRes = await axios.get(GITHUB_RAW);
-    const apiBase = rawRes.data.apiv1;
-
-    const apiUrl = `${apiBase}/api/font?id=${id}&text=${encodeURIComponent(text)}`;
-    const { data } = await axios.get(apiUrl);
-    return data.output || text;
-  } catch (e) {
-    console.error("Font API error:", e.message);
-    return text;
-  }
-}
+const axios = require('axios');
 
 module.exports = {
   config: {
     name: "animequiz",
-    aliases: ["animeqz", "aniquiz", "aniqz"],
-    version: "4.0.0",
-    author: "Mr.king",
-    countDown: 10,
+    aliases: ["aniqz"],
+    version: "2.0.0",
+    author: "Mr.King",
+    countDown: 7,
     role: 0,
+    shortDescription: "Play Anime Quiz to earn rewards",
+    longDescription: "Fetch anime quiz from Vercel API and answer to win 10k coins",
     category: "game",
-    guide: { en: "{pn} — Guess the anime character!" }
+    guide: "{pn}"
   },
 
-  onStart: async function ({ api, event }) {
+  onStart: async function ({ api, event, reply }) {
     try {
-      const GITHUB_RAW = "https://raw.githubusercontent.com/masterjiraya890-svg/Aliya-Official--v4/main/ApiUrl.json";
-      const rawRes = await axios.get(GITHUB_RAW);
-      const quizApiBase = rawRes.data.apiv1;
+      const res = await axios.get('https://aliya-game.vercel.app/api/game/animequiz/random');
 
-      const { data } = await axios.get(`${quizApiBase}/api/animequiz`);
-      const { image, options, answer } = data;
+      if (!res.data.success || !res.data.data) {
+        return reply("⚠️ Server theke quiz fetch kora jayni. Onno kono game try koro!");
+      }
 
-      const imageStream = await axios({ method: "GET", url: image, responseType: "stream" });
+      const quiz = res.data.data;
+      const mediaUrl = quiz.activeMedia || quiz.media.imgur || quiz.media.drive;
 
-      const body = await toFont(`🎌 𝐀𝐧𝐢𝐦𝐞 𝐐𝐮𝐢𝐳 🎭
-━━━━━━━━━━━━━━
-📷 Guess the Anime Character!
+      let msg = "✨ ─── [ ANIME QUIZ ] ─── ✨\n\n";
+      msg += `❓ Question: ${quiz.title}\n\n`;
 
-🅐 ${options.A}
-🅑 ${options.B}
-🅒 ${options.C}
-🅓 ${options.D}
+      const labels = ["A", "B", "C", "D"];
+      quiz.options.forEach((opt, idx) => {
+        msg += `[ ${labels[idx]} ] ${opt}\n`;
+      });
 
-⏳ You have 1 minute 30 seconds!
-💡 You have 3 chances! Reply with A, B, C or D.`);
+      msg += "\n🎁 Reward: $10,000\n";
+      msg += "⏱️ Reply with option (A/B/C/D or 1/2/3/4)";
 
-      api.sendMessage(
-        { body, attachment: imageStream.data },
-        event.threadID,
-        async (err, info) => {
-          if (err) return console.error(err);
+      const replyData = {
+        commandName: this.config.name,
+        messageID: null,
+        author: event.senderID,
+        correctIndex: quiz.correctIndex,
+        options: quiz.options,
+        answered: false
+      };
 
-          global.GoatBot.onReply.set(info.messageID, {
-            commandName: this.config.name,
-            type: "reply",
-            messageID: info.messageID,
-            author: event.senderID,
-            correctAnswer: answer,
-            chances: 3,
-            answered: false
-          });
+      if (mediaUrl) {
+        try {
+          const stream = (await axios.get(mediaUrl, { responseType: 'stream', timeout: 5000 })).data;
+          const info = await api.sendMessage({ body: msg, attachment: stream }, event.threadID, event.messageID);
+          replyData.messageID = info.messageID;
+          global.GoatBot.onReply.set(info.messageID, replyData);
+          return;
+        } catch (e) {
+          if (quiz.media.drive && mediaUrl !== quiz.media.drive) {
+            try {
+              const driveStream = (await axios.get(quiz.media.drive, { responseType: 'stream', timeout: 5000 })).data;
+              const info = await api.sendMessage({ body: msg, attachment: driveStream }, event.threadID, event.messageID);
+              replyData.messageID = info.messageID;
+              global.GoatBot.onReply.set(info.messageID, replyData);
+              return;
+            } catch (err) {}
+          }
+        }
+      }
 
-          setTimeout(async () => {
-            const quizData = global.GoatBot.onReply.get(info.messageID);
-            if (quizData && !quizData.answered) {
-              try {
-                await api.unsendMessage(info.messageID);
-              } catch {}
-              global.GoatBot.onReply.delete(info.messageID);
-            }
-          }, 90000);
-        },
-        event.messageID
-      );
+      const info = await api.sendMessage(msg, event.threadID, event.messageID);
+      replyData.messageID = info.messageID;
+      global.GoatBot.onReply.set(info.messageID, replyData);
+
     } catch (err) {
-      console.error(err);
-      const failMsg = await toFont("❌ Failed to fetch Anime Quiz data.");
-      api.sendMessage(failMsg, event.threadID, event.messageID);
+      return reply("❌ Game server offline or connection error!");
     }
   },
 
-  onReply: async function ({ api, event, Reply, usersData }) {
-    let { author, correctAnswer, messageID, chances } = Reply;
-    const reply = event.body?.trim().toUpperCase();
+  onReply: async function ({ api, event, Reply, Users, reply }) {
+    if (event.senderID !== Reply.author) return;
 
-    if (event.senderID !== author) {
-      const msg = await toFont("⚠️ This is not your quiz!");
-      return api.sendMessage(msg, event.threadID, event.messageID);
+    if (Reply.answered) {
+      return reply("⚠️ Tui eita ekbar uttor diye felechos!");
     }
 
-    if (!reply || !["A", "B", "C", "D"].includes(reply)) {
-      const msg = await toFont("❌ Please reply with A, B, C or D.");
-      return api.sendMessage(msg, event.threadID, event.messageID);
+    const input = event.body.trim().toUpperCase();
+    let userAns = -1;
+
+    if (["A", "1"].includes(input)) userAns = 0;
+    else if (["B", "2"].includes(input)) userAns = 1;
+    else if (["C", "3"].includes(input)) userAns = 2;
+    else if (["D", "4"].includes(input)) userAns = 3;
+
+    if (userAns === -1) {
+      return reply("⚠️ Valid option choose koro: A, B, C, D ba 1, 2, 3, 4");
     }
 
-    if (reply === correctAnswer) {
-      try {
-        await api.unsendMessage(messageID);
-      } catch {}
+    Reply.answered = true;
+    global.GoatBot.onReply.delete(Reply.messageID);
 
-      const rewardCoin = 350;
-      const rewardExp = 120;
-      const userData = (await usersData.get(event.senderID)) || { money: 0, exp: 0 };
-      userData.money += rewardCoin;
-      userData.exp += rewardExp;
-      await usersData.set(event.senderID, userData);
+    const labels = ["A", "B", "C", "D"];
+    const correctAnsText = Reply.options[Reply.correctIndex] || "N/A";
+    const correctLabel = labels[Reply.correctIndex];
 
-      const correctMsg = await toFont(`🎯 Sugoi! You guessed it right!
-
-✅ Correct Answer!
-💰 +${rewardCoin} Coins
-🌟 +${rewardExp} EXP
-
-🏆 You're a true anime fan!`);
-
-      if (global.GoatBot.onReply.has(messageID)) {
-        global.GoatBot.onReply.get(messageID).answered = true;
-        global.GoatBot.onReply.delete(messageID);
-      }
-
-      return api.sendMessage(correctMsg, event.threadID, event.messageID);
+    if (userAns === Reply.correctIndex) {
+      const reward = 10000;
+      await Users.increaseMoney(event.senderID, reward);
+      return reply(`🎉 𝗖𝗢𝗡𝗚𝗥𝗔𝗧𝗨𝗟𝗔𝗧𝗜𝗢𝗡𝗦!\n\nTor uttor shothik hoyeche!\n💰 Prize Received: $10,000`);
     } else {
-      chances--;
-
-      if (chances > 0) {
-        global.GoatBot.onReply.set(messageID, { ...Reply, chances });
-        const wrongTryMsg = await toFont(`❌ Wrong answer!
-⏳ You still have ${chances} chance(s) left. Try again!`);
-        return api.sendMessage(wrongTryMsg, event.threadID, event.messageID);
-      } else {
-        try {
-          await api.unsendMessage(messageID);
-        } catch {}
-        const wrongMsg = await toFont(`😢 Out of chances!
-✅ The correct option was: ${correctAnswer}`);
-        return api.sendMessage(wrongMsg, event.threadID, event.messageID);
-      }
+      const stylishAns = `❮ ${correctLabel} ❯  ❯❯ ${correctAnsText.toUpperCase()} ❮❮`;
+      return reply(`❌ 𝗪𝗥𝗢𝗡𝗚 𝗔𝗡𝗦𝗪𝗘𝗥!\n\n💰 Added Balance: $0\n\n📌 𝗖𝗼𝗿𝗿𝗲𝗰𝘁 𝗔𝗻𝘀𝘄𝗲𝗿: ${stylishAns}`);
     }
   }
 };
-                                               
+          
