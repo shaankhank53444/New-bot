@@ -1,7 +1,7 @@
 /**
  * @author Mr.king x Aliya
  * Aliya Official V4 Engine
- * Ultra Fast Auto-Recovery Launcher (v2)
+ * Ultra Fast Auto-Recovery Launcher
  */
 
 "use strict";
@@ -12,21 +12,29 @@ const net = require("net");
 const BOT_FILE = "Aliya.js";
 const RESTART_DELAY = 1000;
 const MAX_CRASH_COUNT = 5;
-const CRASH_WINDOW = 60 * 1000;          // crashes counted inside this window
-const CRASH_PAUSE = 30 * 1000;           // pause after too many crashes
-const MAX_LOGOUT_RETRIES = 3;            // exit code 0 = logout / stop
-const LOGOUT_RETRY_DELAY = 30 * 1000;
-const STABLE_UPTIME = 5 * 60 * 1000;     // running this long resets all counters
-const EXIT_RESTART = 2;                  // bot asked for a planned restart
-const KILL_TIMEOUT = 5000;
+const CRASH_RESET_TIME = 60000; // 1 min
+const CRASH_PAUSE_TIME = 30000; // 30 sec
 
-const BANNER = `
-  █████╗ ██╗     ██╗██╗   ██╗██████╗     ██╗   ██╗██╗  ██╗
+// ───────────── Colors ─────────────
+const C = {
+    reset: "\x1b[0m",
+    bold: "\x1b[1m",
+    dim: "\x1b[2m",
+    red: "\x1b[31m",
+    green: "\x1b[32m",
+    yellow: "\x1b[33m",
+    magenta: "\x1b[35m",
+    cyan: "\x1b[36m",
+    gray: "\x1b[90m"
+};
+
+const BANNER = `${C.magenta}${C.bold}
+  █████╗ ██╗     ██╗██╗   ██╗ █████╗     ██╗   ██╗██╗  ██╗
  ██╔══██╗██║     ██║╚██╗ ██╔╝██╔══██╗    ██║   ██║██║  ██║
- ███████║██║     ██║ ╚████╔╝ ██████╔╝    ██║   ██║███████║
- ██╔══██║██║     ██║  ╚██╔╝  ██╔══██╗    ╚██╗ ██╔╝╚════██║
+ ███████║██║     ██║ ╚████╔╝ ███████║    ██║   ██║███████║
+ ██╔══██║██║     ██║  ╚██╔╝  ██╔══██║    ╚██╗ ██╔╝╚════██║
  ██║  ██║███████╗██║   ██║   ██║  ██║     ╚████╔╝      ██║
- ╚═╝  ╚═╝╚══════╝╚═╝   ╚═╝   ╚═╝  ╚═╝      ╚═══╝       ╚═╝
+ ╚═╝  ╚═╝╚══════╝╚═╝   ╚═╝   ╚═╝  ╚═╝      ╚═══╝       ╚═╝${C.reset}
 `;
 
 let child = null;
@@ -34,22 +42,28 @@ let shuttingDown = false;
 let restartTimer = null;
 let restartCount = 0;
 let starting = false;
+let paused = false; // crash-guard pause (watchdog must not interfere)
 let crashCount = 0;
 let lastCrashTime = 0;
-let logoutRetries = 0;
-let lastStart = 0;
 
+// Smart Port Picker
+// - Uses process.env.PORT (Render/Koyeb/Railway) or 8080 by default.
+// - If busy, retries a few times, then falls back to a random free port.
+// - The chosen port is passed to the bot as process.env.PORT.
 const PREFERRED_PORT = Number(process.env.PORT) || 8080;
 
 function now() {
     return new Date().toTimeString().split(" ")[0];
 }
 
-function log(symbol, tag, msg) {
-    console.log(`[${now()}] ${symbol} [${tag}] ──► ${msg}`);
+function log(symbol, tag, msg, color = C.cyan) {
+    console.log(`${C.gray}[${now()}]${C.reset} ${symbol} ${color}${C.bold}[${tag}]${C.reset} ${C.gray}──►${C.reset} ${msg}`);
 }
 
-const errMsg = err => String((err && err.message) || err);
+function errMsg(err) {
+    if (!err) return "Unknown error";
+    return err.stack ? err.stack.split("\n").slice(0, 3).join(" | ") : String(err.message || err);
+}
 
 function isPortFree(port) {
     return new Promise(resolve => {
@@ -77,72 +91,32 @@ async function pickPort() {
         await new Promise(r => setTimeout(r, 500));
     }
     const port = await getRandomFreePort();
-    log("⚠️", "PORT", `Port ${PREFERRED_PORT} is busy. Using free port ${port} instead.`);
+    log("⚠️", "PORT", `Port ${PREFERRED_PORT} is busy. Using free port ${port} instead.`, C.yellow);
     return port;
 }
 
 function isChildRunning() {
-    return child !== null && child.exitCode === null && child.signalCode === null;
+    return child && child.exitCode === null && !child.killed;
 }
 
-function scheduleRestart(delay = RESTART_DELAY, reason = "RECOVERY") {
-    if (shuttingDown || restartTimer) return;
-    log("🛡️", reason, `Re-booting in ${Math.round(delay / 1000)}s...`);
-    restartTimer = setTimeout(() => {
-        restartTimer = null;
-        startBot();
-    }, delay);
-}
-
-function handleExit(code, signal) {
-    child = null;
-    log("💀", "EXIT", `Stopped | Code: [ ${code} ] | Signal: [ ${signal} ]`);
-    if (shuttingDown) return;
-
-    const uptime = Date.now() - lastStart;
-    if (uptime > STABLE_UPTIME) {
-        crashCount = 0;
-        logoutRetries = 0;
-    }
-
-    // Planned restart requested by the bot (autoRestart / restart command)
-    if (code === EXIT_RESTART) {
-        log("🔄", "RESTART", "Planned restart requested by the bot.");
-        return scheduleRestart(RESTART_DELAY, "RESTART");
-    }
-
-    // Code 0 = bot stopped itself / account logged out: retry a few times, then stop
-    if (code === 0) {
-        if (logoutRetries >= MAX_LOGOUT_RETRIES) {
-            log("🛑", "STOP", "Bot keeps logging out. Check appstate/checkpoint. Server turning OFF...");
-            shuttingDown = true;
-            return process.exit(0);
-        }
-        logoutRetries++;
-        log("🔁", "RELOGIN", `Bot exited with code 0 (logout?). Retry ${logoutRetries}/${MAX_LOGOUT_RETRIES}`);
-        return scheduleRestart(LOGOUT_RETRY_DELAY, "RELOGIN");
-    }
-
-    // Crash-loop protection (also covers kills by signal, e.g. out of memory)
-    const t = Date.now();
-    crashCount = t - lastCrashTime < CRASH_WINDOW ? crashCount + 1 : 1;
-    lastCrashTime = t;
-
-    if (crashCount >= MAX_CRASH_COUNT) {
-        log("🚨", "CRASH_GUARD", `Too many crashes (${crashCount} in 1 minute). Pausing ${CRASH_PAUSE / 1000}s...`);
-        crashCount = 0;
-        return scheduleRestart(CRASH_PAUSE, "CRASH_GUARD");
-    }
-
-    log("⚠️", "AUTO_HEAL", `Crash detected! Consecutive crashes: [ ${crashCount} ]`);
-    scheduleRestart(RESTART_DELAY * crashCount, "RECOVERY");
+function printBanner(port) {
+    const line = "═".repeat(59);
+    const row = (text) => ` ${C.cyan}║${C.reset} ${text.padEnd(57)} ${C.cyan}║${C.reset}`;
+    console.log("\n" + BANNER);
+    console.log(` ${C.cyan}╔${line}╗${C.reset}`);
+    console.log(row(`${C.bold}👑 ALIYA OFFICIAL V4 ENGINE${C.reset}`.padEnd(57 + 8)));
+    console.log(row(`👤 DEVELOPER    : Mr.king`));
+    console.log(row(`🔄 LAUNCH COUNT : ${restartCount}`));
+    console.log(row(`🌐 PORT         : ${port}`));
+    console.log(row(`⚡ MODE         : Multi-Group Ready`));
+    console.log(` ${C.cyan}╚${line}╝${C.reset}\n`);
 }
 
 async function startBot() {
-    if (shuttingDown || starting) return;
+    if (shuttingDown || starting || paused) return;
 
     if (isChildRunning()) {
-        log("⚠️", "INDEX", `${BOT_FILE} is already running!`);
+        log("⚠️", "INDEX", "Aliya.js is already running!", C.yellow);
         return;
     }
 
@@ -157,70 +131,123 @@ async function startBot() {
         botPort = await pickPort();
     } catch (e) {
         starting = false;
-        log("❌", "PORT_FAIL", errMsg(e));
-        return scheduleRestart();
+        log("❌", "PORT_FAIL", e.message, C.red);
+        scheduleRestart();
+        return;
     }
     starting = false;
     if (shuttingDown) return;
 
     restartCount++;
-
-    console.log("\n" + BANNER);
-    console.log(" ╔═══════════════════════════════════════════════════════════╗");
-    console.log(" ║              👑 ALIYA OFFICIAL V4 ENGINE                  ║");
-    console.log(" ║              👤 DEVELOPER : Mr.king                      ║");
-    console.log(` ║              🔄 LAUNCH COUNT : ${String(restartCount).padEnd(25)} ║`);
-    console.log(" ╚═══════════════════════════════════════════════════════════╝\n");
+    printBanner(botPort);
 
     try {
         child = spawn(process.execPath, [BOT_FILE], {
             cwd: __dirname,
             stdio: "inherit",
             shell: false,
-            env: { ...process.env, PORT: String(botPort) }
+            env: {
+                ...process.env,
+                PORT: String(botPort),
+                // Bigger libuv thread pool => many groups can do file/network work in parallel
+                UV_THREADPOOL_SIZE: process.env.UV_THREADPOOL_SIZE || "32"
+            }
         });
     } catch (error) {
-        log("❌", "SPAWN_FAIL", `Failed to start ${BOT_FILE}: ${errMsg(error)}`);
+        log("❌", "SPAWN_FAIL", `Failed to start ${BOT_FILE}: ${error.message}`, C.red);
         child = null;
-        return scheduleRestart();
+        scheduleRestart();
+        return;
     }
 
-    lastStart = Date.now();
-    log("🚀", "SYSTEM", `Bot core spawned | PID: [ ${child.pid} ] | PORT: [ ${botPort} ]`);
+    log("🚀", "SYSTEM", `Bot core spawned | PID: ${C.green}${child.pid}${C.reset}`, C.green);
 
-    child.on("error", error => log("❌", "PROCESS_ERR", `Error in ${BOT_FILE}: ${errMsg(error)}`));
-    child.on("exit", handleExit);
+    child.on("error", error => {
+        log("❌", "PROCESS_ERR", `Error in ${BOT_FILE}: ${error.message}`, C.red);
+    });
+
+    child.on("exit", (code, signal) => {
+        child = null;
+        log("💀", "EXIT", `Stopped | Code: [ ${code} ] | Signal: [ ${signal} ]`, C.red);
+
+        if (shuttingDown) return;
+
+        // Code 0 = intentionally stopped / logged out
+        if (code === 0) {
+            log("🛑", "STOP", "Bot stopped / ID logged out. Server turning OFF...", C.yellow);
+            shuttingDown = true;
+            process.exit(0);
+        }
+
+        // Code 2 = planned restart (autoRestart / restart command) -> not a crash
+        if (code === 2) {
+            log("🔁", "RESTART", "Planned restart requested. Booting again...", C.green);
+            crashCount = 0;
+            scheduleRestart();
+            return;
+        }
+
+        // Crash-Loop Protection
+        const currentTime = Date.now();
+        if (currentTime - lastCrashTime < CRASH_RESET_TIME) {
+            crashCount++;
+        } else {
+            crashCount = 1;
+        }
+        lastCrashTime = currentTime;
+
+        if (crashCount >= MAX_CRASH_COUNT) {
+            log("🚨", "CRASH_GUARD", `Too many crashes (${crashCount} in 1 min). Pausing for ${CRASH_PAUSE_TIME / 1000}s...`, C.red);
+            paused = true;
+            setTimeout(() => {
+                paused = false;
+                crashCount = 0;
+                scheduleRestart();
+            }, CRASH_PAUSE_TIME);
+            return;
+        }
+
+        log("⚠️", "AUTO_HEAL", `Crash detected! Consecutive crashes: [ ${crashCount} ]`, C.yellow);
+        scheduleRestart();
+    });
 }
 
-// Watchdog: if nothing is running and nothing is scheduled, start again
+function scheduleRestart() {
+    if (shuttingDown || restartTimer || paused) return;
+
+    log("🛡️", "RECOVERY", `Re-booting in ${RESTART_DELAY / 1000}s...`, C.green);
+
+    restartTimer = setTimeout(() => {
+        restartTimer = null;
+        if (!shuttingDown) startBot();
+    }, RESTART_DELAY);
+}
+
+// Watchdog Anti-Hang Protection
 setInterval(() => {
-    if (!shuttingDown && !isChildRunning() && !restartTimer && !starting) {
-        log("⚠️", "WATCHDOG", "Bot is inactive! Forcing start...");
+    if (!shuttingDown && !paused && !isChildRunning() && !restartTimer && !starting) {
+        log("⚠️", "WATCHDOG", "Bot is inactive! Forcing start...", C.yellow);
         scheduleRestart();
     }
 }, 10000);
 
-// Graceful shutdown: wait for the bot to exit, force-kill after a timeout
+// Graceful Shutdown
 function shutdown(signal) {
     if (shuttingDown) return;
     shuttingDown = true;
 
-    log("⚠️", "SHUTDOWN", `${signal} received. Cleaning up...`);
+    log("⚠️", "SHUTDOWN", `${signal} received. Cleaning up...`, C.yellow);
     if (restartTimer) clearTimeout(restartTimer);
-
-    if (!isChildRunning()) return process.exit(0);
-
-    child.once("exit", () => process.exit(0));
-    try { child.kill(signal); } catch (e) { return process.exit(0); }
-    setTimeout(() => {
-        try { child.kill("SIGKILL"); } catch (e) {}
-        process.exit(0);
-    }, KILL_TIMEOUT).unref();
+    if (child) {
+        try { child.kill(signal); } catch (e) {}
+    }
+    setTimeout(() => process.exit(0), 500);
 }
 
 process.on("SIGTERM", () => shutdown("SIGTERM"));
 process.on("SIGINT", () => shutdown("SIGINT"));
-process.on("uncaughtException", err => log("❌", "UNCAUGHT", errMsg(err)));
-process.on("unhandledRejection", err => log("⚠️", "UNHANDLED", errMsg(err)));
+process.on("uncaughtException", err => log("❌", "UNCAUGHT", errMsg(err), C.red));
+process.on("unhandledRejection", err => log("⚠️", "UNHANDLED", errMsg(err), C.yellow));
 
+// Directly launch engine
 startBot();

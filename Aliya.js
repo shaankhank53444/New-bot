@@ -5,30 +5,12 @@
 
 "use strict";
 
-// Trace WHO stops the bot and with which code (helps find the real logout cause)
-const _realExit = process.exit;
-process.exit = function (code) {
-	console.error(`[EXIT_TRACE] process.exit(${code}) called from:\n${new Error().stack.split("\n").slice(2, 7).join("\n")}`);
-	return _realExit.call(process, code);
-};
+process.on('unhandledRejection', error => console.error("[UNHANDLED_REJECTION]", error));
+process.on('uncaughtException', error => console.error("[UNCAUGHT_EXCEPTION]", error));
 
-// Error storm guard: log errors, but restart cleanly if they pile up
-const errorTimes = [];
-function onFatal(tag, error) {
-	console.error(tag, error);
-	const t = Date.now();
-	errorTimes.push(t);
-	while (errorTimes.length && t - errorTimes[0] > 60000) errorTimes.shift();
-	if (errorTimes.length >= 20) {
-		console.error("[FATAL] 20+ errors in 60s. Exiting so the launcher can restart cleanly...");
-		process.exit(1);
-	}
-}
-process.on('unhandledRejection', error => onFatal("[UNHANDLED_REJECTION]", error));
-process.on('uncaughtException', error => onFatal("[UNCAUGHT_EXCEPTION]", error));
-
-const withTimeout = (promise, ms, label) =>
-	Promise.race([promise, new Promise((_, reject) => setTimeout(() => reject(new Error(`${label} timed out`)), ms))]);
+// Many groups = many listeners/events at once. Raise limit so Node doesn't spam warnings.
+require("events").EventEmitter.defaultMaxListeners = 100;
+process.setMaxListeners(100);
 
 const fs = require("fs-extra");
 const google = require("googleapis").google;
@@ -162,7 +144,7 @@ global.temp = {
 };
 
 // Hot Reloading Setup
-const watchAndReloadConfig = (dir, type, prop, logName, afterReload) => {
+const watchAndReloadConfig = (dir, type, prop, logName) => {
 	let lastModified = fs.statSync(dir).mtimeMs;
 	fs.watch(dir, (eventType) => {
 		if (eventType === type) {
@@ -172,11 +154,7 @@ const watchAndReloadConfig = (dir, type, prop, logName, afterReload) => {
 					if (lastModified === currentMtime) return;
 					lastModified = currentMtime;
 
-					const fresh = JSON.parse(fs.readFileSync(dir, 'utf-8'));
-					const target = global.GoatBot[prop];
-					for (const key of Object.keys(target)) delete target[key];
-					Object.assign(target, fresh);
-					if (afterReload) afterReload();
+					global.GoatBot[prop] = JSON.parse(fs.readFileSync(dir, 'utf-8'));
 					log.success(logName, `Reloaded ${dir.replace(process.cwd(), "")}`);
 				} catch (err) {
 					log.warn(logName, `Can't reload ${dir.replace(process.cwd(), "")}`);
@@ -186,19 +164,12 @@ const watchAndReloadConfig = (dir, type, prop, logName, afterReload) => {
 	});
 };
 
-const syncEnv = () => {
-	global.GoatBot.envGlobal = global.GoatBot.configCommands.envGlobal;
-	global.GoatBot.envCommands = global.GoatBot.configCommands.envCommands;
-	global.GoatBot.envEvents = global.GoatBot.configCommands.envEvents;
-};
-const syncWhiteList = () => {
-	const ids = global.GoatBot.config.whiteListMode?.whiteListIds;
-	if (Array.isArray(ids)) global.GoatBot.config.whiteListMode.whiteListIds = ids.map(id => id.toString());
-};
+watchAndReloadConfig(dirConfigCommands, 'change', 'configCommands', 'CONFIG COMMANDS');
+watchAndReloadConfig(dirConfig, 'change', 'config', 'CONFIG');
 
-watchAndReloadConfig(dirConfigCommands, 'change', 'configCommands', 'CONFIG COMMANDS', syncEnv);
-watchAndReloadConfig(dirConfig, 'change', 'config', 'CONFIG', syncWhiteList);
-syncEnv();
+global.GoatBot.envGlobal = global.GoatBot.configCommands.envGlobal;
+global.GoatBot.envCommands = global.GoatBot.configCommands.envCommands;
+global.GoatBot.envEvents = global.GoatBot.configCommands.envEvents;
 
 const getText = global.utils.getText;
 
@@ -232,7 +203,7 @@ if (config.autoRestart) {
 			const OAuth2_client = new OAuth2(clientId, clientSecret);
 			OAuth2_client.setCredentials({ refresh_token: refreshToken });
 			
-			const accessToken = await withTimeout(OAuth2_client.getAccessToken(), 15000, "Gmail token");
+			const accessToken = await OAuth2_client.getAccessToken();
 			const transporter = nodemailer.createTransport({
 				host: 'smtp.gmail.com',
 				service: 'Gmail',
@@ -258,21 +229,14 @@ if (config.autoRestart) {
 	// 2. Google Drive Setup
 	try {
 		if (utils.drive && typeof utils.drive.checkAndCreateParentFolder === "function") {
-			utils.drive.parentID = await withTimeout(utils.drive.checkAndCreateParentFolder("AliyaBot"), 15000, "Google Drive");
+			utils.drive.parentID = await utils.drive.checkAndCreateParentFolder("AliyaBot");
 		}
 	} catch (err) {
 		log.warn("GDRIVE_INIT", "Google Drive bypass: " + err.message);
 	}
 
-	// 3. Trigger Core Login (exit on boot failure so the launcher restarts us, never a silent zombie)
-	try {
-		require(`./bot/login/login.js`);
-	} catch (err) {
-		log.error("LOGIN_BOOT", err.stack || err.message);
-		process.exit(1);
-	}
-})().catch(err => {
-	log.error("BOOT", err.stack || err.message);
-	process.exit(1);
-});
+	// 3. Trigger Core Login
+	console.log("\x1b[35m\x1b[1m👑 ALIYA V4\x1b[0m \x1b[90m|\x1b[0m \x1b[36mStarting login...\x1b[0m \x1b[90m|\x1b[0m \x1b[32mMulti-group mode ON\x1b[0m");
+	require(`./bot/login/login.js`);
+})();
 	
