@@ -1,160 +1,160 @@
 # index.js
-Goat.newVersionDetected=🌸 You are using version %1, latest version is %2. Please update: %3
-Goat.autoRestart1=🌸 Bot will auto restart in %1
-Goat.autoRestart2=🧸 Bot will auto restart by cron job: %1
-Goat.googleApiTokenExpired=🌷 Google API refresh token expired, please get a new token at https://developers.google.com/oauthplayground/
+Goat.newVersionDetected=🌸 𝐔𝐩𝐝𝐚𝐭𝐞 ┊ You are on v%1, latest is v%2 · run: %3
+Goat.autoRestart1=🌸 Auto restart in %1
+Goat.autoRestart2=🌸 Auto restart by cron job: %1
+Goat.googleApiTokenExpired=❌ Google API refresh token expired, get a new one: https://developers.google.com/oauthplayground/
 
 # bot/login/login.js
-login.currentlyLogged=🌸 Logging in... 🧸
-login.notFoundDirAccount=🌸 Cannot find file %1
-login.loginToken=🌷 Login with access token
-login.loginCookieString=🎀 Login with cookie string
-login.loginCookieNetscape=🤍 Login with cookie netscape
-login.loginCookieArray=🍨 Login with cookie array
-login.loginPassword=✨ Login with email & password...
-login.accountError=🌸 Please enter valid token/cookie format into file %7
-login.cannotFindAccount=🌸 Cannot find facebook account, please choose an option:
-login.chooseAccount=🌷 Login with email and password
-login.chooseToken=🎀 Login with token full permission
-login.chooseCookieString=✨ Login with cookie string
-login.chooseCookieArray=🧸 Login with cookie array
-login.loginWith=🌸 You chose to %1
-login.inputEmail=🌷 Please enter your email/phone:
-login.inputPassword=🎀 Please enter your password:
-login.input2FA=✨ Please enter 2FA code:
-login.inputToken=🌸 Please enter your full permission token:
-login.inputCookieString=🌷 Please enter your cookie string:
-login.inputCookieArray=🎀 Please enter your cookie array:
-login.refreshCookie=🌸 Refreshing cookie... 🧸
-login.refreshCookieError=An error occurred when refreshing the cookie
-login.refreshCookieSuccess=✨ Refreshed cookie successfully! Restart to apply 🌷
-login.refreshCookieWarning=⚠️ Auto refresh enabled, but email/password not found in config.json
-login.tokenError=Token is invalid or expired in file %2!
-login.cookieError=Cookie is invalid or expired!
-login.loginPasswordError=Error logging in with config.json credentials!
-login.loginSuccess=🌸 Successfully logged in! 💖
-login.loginError=An error occurred while signing in!
-login.openDashboardSuccess=🌷 Opened bot management page! ✨
-login.openDashboardError=Error opening bot management page!
-login.changeGbanData=🌸 DATA CHANGED, CANNOT LAUNCH BOT!
-login.errorNoti=Error retrieving message!
-login.refreshFbstateSuccess=🌸 Refreshed %1 file successfully! ✨
-login.refreshFbstateError=Error refreshing %1 file!
-login.youAreBanned=You have been banned from using Aliya Bot!
-login.checkGbanError=Error checking GBAN, try node update!
-login.gbanMessage=Banned from Aliya Bot on %1!\n» Reason: %2\n» Time: %3
-login.gbanMessageToDate=Banned from Aliya Bot on %1!\n» Reason: %2\n» Time: %3\n» To date: %4
-login.gbanAdminMessage=🌸 User %1 was banned on %2 for: %3
-login.openServerUptimeSuccess=🚀 Opened uptime server: %1 ✨
-login.openServerUptimeError=Cannot open server uptime!
-login.restartListenMessage=🌸 ListenMQTT restart enabled every %1 🧸
-login.stopRestartListenMessage=🌷 ListenMQTT restart disabled
-login.restartListenMessageError=Error restarting ListenMQTT!
-login.restartListenMessage2=✨ Successfully restarted ListenMQTT! 🌸
-login.refreshCookieAfter=🎀 Refreshing cookie after %1 🌷
-login.listenMqttClose=🌸 ListenMQTT closed 🧸
-login.listenMqttCloseByUser=🌷 ListenMQTT closed by user
-login.retryCheckLiveCookie=🎀 Retrying to check cookie... %1
-login.startBotSuccess=🌸 𝑨𝒍𝒊𝒚𝒂 𝑩𝒐𝒕 𝒊𝒔 𝑵𝒐𝒘 𝑨𝒄𝒕𝒊𝒗𝒆 & 𝑹𝒆𝒂𝒅𝒚! 💖✨
+login.currentlyLogged=🌸 Logging in...
+login.notFoundDirAccount=❌ File not found: %1
+login.loginToken=🌸 Login with access token
+login.loginCookieString=🌸 Login with cookie string
+login.loginCookieNetscape=🌸 Login with cookie netscape
+login.loginCookieArray=🌸 Login with cookie array
+login.loginPassword=🌸 Login with email & password...
+login.accountError=❌ Enter a valid token/cookie format in file %7
+login.cannotFindAccount=❌ No facebook account found, choose an option:
+login.chooseAccount=① Email & password
+login.chooseToken=② Full permission token
+login.chooseCookieString=③ Cookie string
+login.chooseCookieArray=④ Cookie array
+login.loginWith=🌸 You chose: %1
+login.inputEmail=🌸 Enter your email/phone:
+login.inputPassword=🌸 Enter your password:
+login.input2FA=🌸 Enter 2FA code (leave empty if none):
+login.inputToken=🌸 Enter your full permission token:
+login.inputCookieString=🌸 Enter your cookie string:
+login.inputCookieArray=🌸 Enter your cookie array:
+login.refreshCookie=🌸 Refreshing cookie...
+login.refreshCookieError=❌ Failed to refresh cookie
+login.refreshCookieSuccess=✨ Cookie refreshed · restart to apply
+login.refreshCookieWarning=⚠️ Auto refresh is on, but email/password is missing in config.json
+login.tokenError=❌ Token invalid or expired in file %2
+login.cookieError=❌ Cookie invalid or expired
+login.loginPasswordError=❌ Login failed with config.json credentials
+login.loginSuccess=✨ Logged in successfully
+login.loginError=❌ Login failed
+login.openDashboardSuccess=✨ Dashboard opened
+login.openDashboardError=❌ Could not open dashboard
+login.changeGbanData=❌ Data changed, bot cannot launch
+login.errorNoti=❌ Error retrieving message
+login.refreshFbstateSuccess=✨ %1 refreshed
+login.refreshFbstateError=❌ Failed to refresh %1
+login.youAreBanned=❌ You are banned from using Aliya Bot
+login.checkGbanError=❌ GBAN check failed, try: node update
+login.gbanMessage=❌ Banned from Aliya Bot on %1\n» Reason: %2\n» Time: %3
+login.gbanMessageToDate=❌ Banned from Aliya Bot on %1\n» Reason: %2\n» Time: %3\n» Until: %4
+login.gbanAdminMessage=🌸 User %1 was banned on %2 · reason: %3
+login.openServerUptimeSuccess=✨ Uptime server running: %1
+login.openServerUptimeError=❌ Could not start uptime server
+login.restartListenMessage=🌸 ListenMQTT restarts every %1
+login.stopRestartListenMessage=🌸 ListenMQTT auto restart off
+login.restartListenMessageError=❌ ListenMQTT restart failed
+login.restartListenMessage2=🌸 ListenMQTT restarted
+login.refreshCookieAfter=🌸 Cookie refreshes after %1
+login.listenMqttClose=🌸 ListenMQTT closed
+login.listenMqttCloseByUser=🌸 ListenMQTT closed by user
+login.retryCheckLiveCookie=🌸 Rechecking cookie... %1
+login.startBotSuccess=✨ 𝐀𝐥𝐢𝐲𝐚 𝐁𝐨𝐭 𝐢𝐬 𝐎𝐧𝐥𝐢𝐧𝐞 & 𝐑𝐞𝐚𝐝𝐲
 
-version.tooOldVersion=🌸 Your bot version is too old! Please update using: %1 🌷
+version.tooOldVersion=❌ Your bot is too old · update: %1
 
 # bot/custom.js
-custom.refreshedFb_dtsg=🌸 Refreshed fb_dtsg and jazoest successfully! ✨
-custom.refreshedFb_dtsgError=Error refreshing fb_dtsg and jazoest!
+custom.refreshedFb_dtsg=✨ fb_dtsg & jazoest refreshed
+custom.refreshedFb_dtsgError=❌ Failed to refresh fb_dtsg & jazoest
 
 # bot/login/loadData.js
-loadData.loadThreadDataSuccess=🌸 Loaded %1 group data successfully! 🌷
-loadData.loadUserDataSuccess=🎀 Loaded %1 user data successfully! ✨
-loadData.refreshingThreadData=🧸 Updating group information... 🌸
-loadData.refreshThreadDataSuccess=✨ Updated %1 group details! 🌷
-loadData.refreshThreadDataError=Error updating group information!
+loadData.loadThreadDataSuccess=✨ Loaded %1 groups
+loadData.loadUserDataSuccess=✨ Loaded %1 users
+loadData.refreshingThreadData=🌸 Updating group info...
+loadData.refreshThreadDataSuccess=✨ Updated %1 groups
+loadData.refreshThreadDataError=❌ Failed to update group info
 
 # bot/login/loadScripts.js
-loadScripts.loadScriptsError=%1 files had errors during loading:
-loadScripts.loadScriptsNotMatchOrigin=⚠️ %1 files do not match original repository:
-loadScripts.NOT_FOUND=🌸 NOT FOUND IN ORIGINAL SOURCE:
-loadScripts.NOT_MATCH=🌷 DOES NOT MATCH ORIGINAL SOURCE:
+loadScripts.loadScriptsError=❌ %1 files failed to load:
+loadScripts.loadScriptsNotMatchOrigin=⚠️ %1 files differ from the original repo:
+loadScripts.NOT_FOUND=❌ Not found in original source:
+loadScripts.NOT_MATCH=⚠️ Differs from original source:
 
 # bot/login/socketIO.js
-socketIO.connected=🌸 Connected to socket.io server ✨
-socketIO.error=Error connecting to socket.io server!
+socketIO.connected=✨ Connected to socket.io server
+socketIO.error=❌ Could not connect to socket.io server
 
 # bot/handler/handlerCheckData.js
-handlerCheckData.cantCreateThread=Cannot write group '%1' to database!
-handlerCheckData.cantCreateUser=Cannot write user '%1' to database!
+handlerCheckData.cantCreateThread=❌ Could not save group '%1' to database
+handlerCheckData.cantCreateUser=❌ Could not save user '%1' to database
 
 # bot/handler/handlerEvents.js
-handlerEvents.userBanned=🚫 ─── 𝑩𝑨𝑵𝑵𝑬𝑫 𝑼𝑺𝑬𝑹 ─── 🌸\n╭──────────────────⬣\n│ 𝐘𝐨𝐮 𝐚𝐫𝐞 𝐛𝐚𝐧𝐧𝐞𝐝 𝐟𝐫𝐨𝐦 𝐭𝐡𝐢𝐬 𝐛𝐨𝐭\n│ 📌 𝐑𝐞𝐚𝐬𝐨𝐧: %1\n│ ⏰ 𝐓𝐢𝐦𝐞: %2\n│ 👤 𝐔𝐈𝐃: %3\n╰──────────────────⬣
-handlerEvents.threadBanned=🚫 ─── 𝑩𝑨𝑵𝑵𝑬𝑫 𝑮𝑹𝑶𝑼𝑷 ─── 🌷\n╭──────────────────⬣\n│ 𝐓𝐡𝐢𝐬 𝐠𝐫𝐨𝐮𝐩 𝐢𝐬 𝐛𝐚𝐧𝐧𝐞𝐝\n│ 📌 𝐑𝐞𝐚𝐬𝐨𝐧: %1\n│ ⏰ 𝐓𝐢𝐦𝐞: %2\n│ 🏠 𝐓𝐈𝐃: %3\n╰──────────────────⬣
-handlerEvents.onlyAdminBox=🔒 🌸 𝐓𝐡𝐢𝐬 𝐠𝐫𝐨𝐮𝐩 𝐢𝐬 𝐜𝐮𝐫𝐫𝐞𝐧𝐭𝐥𝐲 𝐥𝐨𝐜𝐤𝐞𝐝 𝐟𝐨𝐫 𝐆𝐫𝐨𝐮𝐩 𝐀𝐝𝐦𝐢𝐧𝐬 𝐨𝐧𝐥𝐲! 🎀
-handlerEvents.onlyAdminBot=👑 🌸 𝐂𝐮𝐫𝐫𝐞𝐧𝐭𝐥𝐲 𝐨𝐧𝐥𝐲 𝐁𝐨𝐭 𝐀𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐮𝐬𝐞 𝐭𝐡𝐢𝐬 𝐛𝐨𝐭! ✨
-handlerEvents.onlyDeveloperGlobal=⚙️ 🌷 𝐎𝐧𝐥𝐲 𝑴𝒓.𝒌𝒊𝒏𝒈 / 𝑩𝒐𝒕 𝑫𝒆𝒗𝒆𝒍𝒐𝒑𝒆𝒓𝒔 𝐜𝐚𝐧 𝐮𝐬𝐞 𝐭𝐡𝐢𝐬 𝐛𝐨𝐭! 🧸
-handlerEvents.onlyVipUserGlobal=💎 🎀 𝐎𝐧𝐥𝐲 𝐕𝐈𝐏 𝐔𝐬𝐞𝐫𝐬 𝐜𝐚𝐧 𝐮𝐬𝐞 𝐭𝐡𝐢𝐬 𝐛𝐨𝐭! ✨
-handlerEvents.commandNotFound=🌸 ─── 𝑵𝑶𝑻 𝑭𝑶𝑼𝑵𝑫 ─── 🌷\n╭──────────────────⬣\n│ ❌ 𝐂𝐨𝐦𝐦𝐚𝐧𝐝 "%1" 𝐝𝐨𝐞𝐬 𝐧𝐨𝐭 𝐞𝐱𝐢𝐬𝐭!\n│ 💡 𝐓𝐲𝐩𝐞 %2𝐡𝐞𝐥𝐩 𝐭𝐨 𝐬𝐞𝐞 𝐚𝐥𝐥 𝐜𝐨𝐦𝐦𝐚𝐧𝐝𝐬 ✨\n╰──────────────────⬣
-handlerEvents.commandNotFound2=🌸 ─── 𝑵𝑶𝑻 𝑭𝑶𝑼𝑵𝑫 ─── 🌷\n╭──────────────────⬣\n│ ❌ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐜𝐨𝐦𝐦𝐚𝐧𝐝 𝐮𝐬𝐞𝐝!\n│ 💡 𝐓𝐲𝐩𝐞 %1𝐡𝐞𝐥𝐩 𝐭𝐨 𝐬𝐞𝐞 𝐚𝐥𝐥 𝐜𝐨𝐦𝐦𝐚𝐧𝐝𝐬 ✨\n╰──────────────────⬣
-handlerEvents.commandNotFoundSuggestion=🧐 🌸 𝐂𝐨𝐦𝐦𝐚𝐧𝐝 𝐧𝐨𝐭 𝐟𝐨𝐮𝐧𝐝!\n\n💖 𝐃𝐢𝐝 𝐲𝐨𝐮 𝐦𝐞𝐚𝐧: %2%1 ?
-handlerEvents.commandSyntaxError=⚠️ 🌸 𝐖𝐫𝐨𝐧𝐠 𝐬𝐲𝐧𝐭𝐚𝐱! 𝐓𝐲𝐩𝐞 %1𝐡𝐞𝐥𝐩 %2 𝐟𝐨𝐫 𝐠𝐮𝐢𝐝𝐞 🌷
-handlerEvents.onlyAdmin=❌ 🌸 𝐎𝐧𝐥𝐲 𝐆𝐫𝐨𝐮𝐩 𝐀𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐮𝐬𝐞 "%1" 🎀
-handlerEvents.onlyAdminToUseOnReply=❌ 🌸 𝐎𝐧𝐥𝐲 𝐆𝐫𝐨𝐮𝐩 𝐀𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 "%1" 🌷
-handlerEvents.onlyAdminToUseOnReaction=❌ 🌸 𝐎𝐧𝐥𝐲 𝐆𝐫𝐨𝐮𝐩 𝐀𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐫𝐞𝐚𝐜𝐭 𝐭𝐨 "%1" ✨
-handlerEvents.onlyAdminBot2=💫 🌸 𝐎𝐧𝐥𝐲 𝐁𝐨𝐭 𝐀𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐮𝐬𝐞 "%1" 🧸
-handlerEvents.onlyAdminBot2ToUseOnReply=💫 🌸 𝐎𝐧𝐥𝐲 𝐁𝐨𝐭 𝐀𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 "%1" 🌷
-handlerEvents.onlyAdminBot2ToUseOnReaction=💫 🌸 𝐎𝐧𝐥𝐲 𝐁𝐨𝐭 𝐀𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐫𝐞𝐚𝐜𝐭 𝐭𝐨 "%1" ✨
-handlerEvents.onlyDeveloper=⚙️ 🌸 𝐎𝐧𝐥𝐲 𝑴𝒓.𝒌𝒊𝒏𝒈 / 𝑩𝒐𝒕 𝑫𝒆𝒗𝒆𝒍𝒐𝒑𝒆𝒓𝒔 𝐜𝐚𝐧 𝐮𝐬𝐞 "%1" 🎀
-handlerEvents.onlyDeveloperToUseOnReply=⚙️ 🌸 𝐎𝐧𝐥𝐲 𝑴𝒓.𝒌𝒊𝒏𝒈 / 𝑩𝒐𝒕 𝑫𝒆𝒗𝒆𝒍𝒐𝒑𝒆𝒓𝒔 𝐜𝐚𝐧 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 "%1" 🌷
-handlerEvents.onlyDeveloperToUseOnReaction=⚙️ 🌸 𝐎𝐧𝐥𝐲 𝑴𝒓.𝒌𝒊𝒏𝒈 / 𝑩𝒐𝒕 𝑫𝒆𝒗𝒆𝒍𝒐𝒑𝒆𝒓𝒔 𝐜𝐚𝐧 𝐫𝐞𝐚𝐜𝐭 𝐭𝐨 "%1" ✨
-handlerEvents.onlyVipUser=💎 🌸 𝐎𝐧𝐥𝐲 𝐕𝐈𝐏 𝐔𝐬𝐞𝐫𝐬 𝐜𝐚𝐧 𝐮𝐬𝐞 "%1" 🧸
-handlerEvents.onlyVipUserToUseOnReply=💎 🌸 𝐎𝐧𝐥𝐲 𝐕𝐈𝐏 𝐔𝐬𝐞𝐫𝐬 𝐜𝐚𝐧 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 "%1" 🌷
-handlerEvents.onlyVipUserToUseOnReaction=💎 🌸 𝐎𝐧𝐥𝐲 𝐕𝐈𝐏 𝐔𝐬𝐞𝐫𝐬 𝐜𝐚𝐧 𝐫𝐞𝐚𝐜𝐭 𝐭𝐨 "%1" ✨
-handlerEvents.waitingForCommand=⏱ 🌸 Please wait %1s before using this command again 🎀
-handlerEvents.errorOccurred=❌ [ %1 ]\nAn error occurred at command "%2":\n\n%3
-handlerEvents.errorOccurred2=❌ [ %1 ]\nAn error occurred at onChat in "%2":\n\n%3
-handlerEvents.errorOccurred3=❌ [ %1 ]\nAn error occurred at onReply in "%2":\n\n%3
-handlerEvents.errorOccurred4=❌ [ %1 ]\nAn error occurred at onReaction in "%2":\n\n%3
-handlerEvents.errorOccurred5=❌ [ %1 ]\nAn error occurred at onEvent in "%2":\n\n%3
-handlerEvents.errorOccurred6=❌ [ %1 ]\nAn error occurred at onEvent in "%2":\n\n%3
-handlerEvents.errorOccurred7=❌ [ %1 ]\nAn error occurred at onAnyEvent in "%2":\n\n%3
-handlerEvents.cannotFindCommandName=❌ 🌸 Cannot find command name for reply!
-handlerEvents.cannotFindCommand=❌ 🌸 Cannot find command "%1" for reply!
+handlerEvents.userBanned=🚫 ─── 𝑩𝑨𝑵𝑵𝑬𝑫 𝑼𝑺𝑬𝑹 ─── 🌸\n╭──────────────────⬣\n│ ❌ 𝐘𝐨𝐮 𝐚𝐫𝐞 𝐛𝐚𝐧𝐧𝐞𝐝\n│ 📌 𝐑𝐞𝐚𝐬𝐨𝐧: %1\n│ ⏰ 𝐓𝐢𝐦𝐞: %2\n│ 👤 𝐔𝐈𝐃: %3\n╰──────────────────⬣
+handlerEvents.threadBanned=🚫 ─── 𝑩𝑨𝑵𝑵𝑬𝑫 𝑮𝑹𝑶𝑼𝑷 ─── 🌷\n╭──────────────────⬣\n│ ❌ 𝐆𝐫𝐨𝐮𝐩 𝐢𝐬 𝐛𝐚𝐧𝐧𝐞𝐝\n│ 📌 𝐑𝐞𝐚𝐬𝐨𝐧: %1\n│ ⏰ 𝐓𝐢𝐦𝐞: %2\n│ 🏠 𝐓𝐈𝐃: %3\n╰──────────────────⬣
+handlerEvents.onlyAdminBox=🔒 🌸 𝐆𝐫𝐨𝐮𝐩 𝐚𝐝𝐦𝐢𝐧𝐬 𝐨𝐧𝐥𝐲 🎀
+handlerEvents.onlyAdminBot=👑 🌸 𝐁𝐨𝐭 𝐚𝐝𝐦𝐢𝐧𝐬 𝐨𝐧𝐥𝐲 ✨
+handlerEvents.onlyDeveloperGlobal=⚙️ 🌷 𝐃𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐫𝐬 𝐨𝐧𝐥𝐲 🧸
+handlerEvents.onlyVipUserGlobal=💎 🎀 𝐕𝐈𝐏 𝐨𝐧𝐥𝐲 ✨
+handlerEvents.commandNotFound=🌸 ─── 𝑵𝑶𝑻 𝑭𝑶𝑼𝑵𝑫 ─── 🌷\n╭──────────────────⬣\n│ ❌ 𝐂𝐨𝐦𝐦𝐚𝐧𝐝 "%1" 𝐧𝐨𝐭 𝐟𝐨𝐮𝐧𝐝\n│ 💡 𝐓𝐲𝐩𝐞 %2𝐡𝐞𝐥𝐩 ✨\n╰──────────────────⬣
+handlerEvents.commandNotFound2=🌸 ─── 𝑵𝑶𝑻 𝑭𝑶𝑼𝑵𝑫 ─── 🌷\n╭──────────────────⬣\n│ ❌ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐜𝐨𝐦𝐦𝐚𝐧𝐝!\n│ 💡 𝐓𝐲𝐩𝐞 %1𝐡𝐞𝐥𝐩 ✨\n╰──────────────────⬣
+handlerEvents.commandNotFoundSuggestion=🧐 ─── 𝑵𝑶𝑻 𝑭𝑶𝑼𝑵𝑫 ─── 🌸\n╭──────────────────⬣\n│ ❌ 𝐂𝐨𝐦𝐦𝐚𝐧𝐝 𝐧𝐨𝐭 𝐟𝐨𝐮𝐧𝐝\n│ 💖 𝐃𝐢𝐝 𝐲𝐨𝐮 𝐦𝐞𝐚𝐧: %2%1 ?\n╰──────────────────⬣
+handlerEvents.commandSyntaxError=⚠️ ─── 𝑾𝑹𝑶𝑵𝑮 𝑺𝒀𝑵𝑻𝑨𝑿 ─── 🌷\n╭──────────────────⬣\n│ ❌ 𝐖𝐫𝐨𝐧𝐠 𝐬𝐲𝐧𝐭𝐚𝐱\n│ 💡 𝐓𝐲𝐩𝐞 %1𝐡𝐞𝐥𝐩 %2\n╰──────────────────⬣
+handlerEvents.onlyAdmin=❌ 🌸 𝐎𝐧𝐥𝐲 𝐆𝐫𝐨𝐮𝐩 𝐚𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐮𝐬𝐞 "%1" ✨
+handlerEvents.onlyAdminToUseOnReply=❌ 🌸 𝐎𝐧𝐥𝐲 𝐆𝐫𝐨𝐮𝐩 𝐚𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 "%1" ✨
+handlerEvents.onlyAdminToUseOnReaction=❌ 🌸 𝐎𝐧𝐥𝐲 𝐆𝐫𝐨𝐮𝐩 𝐚𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐫𝐞𝐚𝐜𝐭 𝐭𝐨 "%1" ✨
+handlerEvents.onlyAdminBot2=💫 🌸 𝐎𝐧𝐥𝐲 𝐁𝐨𝐭 𝐚𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐮𝐬𝐞 "%1" ✨
+handlerEvents.onlyAdminBot2ToUseOnReply=💫 🌸 𝐎𝐧𝐥𝐲 𝐁𝐨𝐭 𝐚𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 "%1" ✨
+handlerEvents.onlyAdminBot2ToUseOnReaction=💫 🌸 𝐎𝐧𝐥𝐲 𝐁𝐨𝐭 𝐚𝐝𝐦𝐢𝐧𝐬 𝐜𝐚𝐧 𝐫𝐞𝐚𝐜𝐭 𝐭𝐨 "%1" ✨
+handlerEvents.onlyDeveloper=⚙️ 🌸 𝐎𝐧𝐥𝐲 𝐃𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐫𝐬 𝐜𝐚𝐧 𝐮𝐬𝐞 "%1" ✨
+handlerEvents.onlyDeveloperToUseOnReply=⚙️ 🌸 𝐎𝐧𝐥𝐲 𝐃𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐫𝐬 𝐜𝐚𝐧 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 "%1" ✨
+handlerEvents.onlyDeveloperToUseOnReaction=⚙️ 🌸 𝐎𝐧𝐥𝐲 𝐃𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐫𝐬 𝐜𝐚𝐧 𝐫𝐞𝐚𝐜𝐭 𝐭𝐨 "%1" ✨
+handlerEvents.onlyVipUser=💎 🌸 𝐎𝐧𝐥𝐲 𝐕𝐈𝐏 𝐜𝐚𝐧 𝐮𝐬𝐞 "%1" ✨
+handlerEvents.onlyVipUserToUseOnReply=💎 🌸 𝐎𝐧𝐥𝐲 𝐕𝐈𝐏 𝐜𝐚𝐧 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 "%1" ✨
+handlerEvents.onlyVipUserToUseOnReaction=💎 🌸 𝐎𝐧𝐥𝐲 𝐕𝐈𝐏 𝐜𝐚𝐧 𝐫𝐞𝐚𝐜𝐭 𝐭𝐨 "%1" ✨
+handlerEvents.waitingForCommand=⏱ 🌸 𝐖𝐚𝐢𝐭 %1s 🎀
+handlerEvents.errorOccurred=❌ [ %1 ]\nError at command "%2":\n\n%3
+handlerEvents.errorOccurred2=❌ [ %1 ]\nError at onChat in "%2":\n\n%3
+handlerEvents.errorOccurred3=❌ [ %1 ]\nError at onReply in "%2":\n\n%3
+handlerEvents.errorOccurred4=❌ [ %1 ]\nError at onReaction in "%2":\n\n%3
+handlerEvents.errorOccurred5=❌ [ %1 ]\nError at onEvent in "%2":\n\n%3
+handlerEvents.errorOccurred6=❌ [ %1 ]\nError at onEvent in "%2":\n\n%3
+handlerEvents.errorOccurred7=❌ [ %1 ]\nError at onAnyEvent in "%2":\n\n%3
+handlerEvents.cannotFindCommandName=❌ Could not find the command name for reply
+handlerEvents.cannotFindCommand=❌ Command "%1" not found for reply
 
 # bot/autoUptime.js
-autoUptime.autoUptimeTurnedOn=🌸 AutoUptime mode activated! ✨
+autoUptime.autoUptimeTurnedOn=🌸 AutoUptime is on
 
 # database/controller/index.js
-indexController.connectingMongoDB=🌸 Connecting to MongoDB Database... 🧸
-indexController.connectMongoDBSuccess=✨ Connected MongoDB Database successfully! 🌸
-indexController.connectMongoDBError=Error connecting to MongoDB database:
-indexController.connectingMySQL=🌸 Connecting to SQLite Database... 🧸
-indexController.connectMySQLSuccess=✨ Connected SQLite Database successfully! 🌸
-indexController.connectMySQLError=Error connecting to SQLite database:
+indexController.connectingMongoDB=🌸 Connecting to MongoDB...
+indexController.connectMongoDBSuccess=✨ MongoDB connected
+indexController.connectMongoDBError=❌ MongoDB connection failed:
+indexController.connectingMySQL=🌸 Connecting to SQLite...
+indexController.connectMySQLSuccess=✨ SQLite connected
+indexController.connectMySQLError=❌ SQLite connection failed:
 
 # updater.js
-updater.updateTooFast=🌸 Please wait %1m %2s before trying to update again! 🎀
-updater.latestVersion=🌸 You are using the latest version of Aliya Official v4! ✨
-updater.cantFindVersion=Undefined version (%1) in package.json!
-updater.newVersions=✨ Found %1 new updates! Starting update process... 🌸
-updater.updateSuccess=🌸 Updated successfully%1 💖
-updater.configChanged=🌸 %1 was modified, check config.json! 🌷
-updater.installingPackages=🧸 Installing dependencies for bot... 🌸
-updater.installSuccess=✨ Dependencies installed! Restart bot to apply 🌷
-updater.backupSuccess=🌸 Backup saved in %1 folder ✨
-updater.restartToApply=🎀 Restart bot to apply update! 🌸
-updater.skipFile=🌷 Skipped updating %1 file due to comment %2 🌸
+updater.updateTooFast=🌸 Wait %1m %2s before updating again
+updater.latestVersion=✨ You are on the latest 𝐀𝐥𝐢𝐲𝐚 𝐎𝐟𝐟𝐢𝐜𝐢𝐚𝐥 𝐕𝟒
+updater.cantFindVersion=❌ Unknown version (%1) in package.json
+updater.newVersions=🌸 Found %1 updates · starting...
+updater.updateSuccess=✨ Update complete%1
+updater.configChanged=⚠️ %1 was modified, check config.json
+updater.installingPackages=🌸 Installing dependencies...
+updater.installSuccess=✨ Dependencies installed · restart to apply
+updater.backupSuccess=✨ Backup saved in %1
+updater.restartToApply=🌸 Restart the bot to apply the update
+updater.skipFile=🌸 Skipped %1 (comment: %2)
 
 # dashboard/routes/verifyfbid.js
-verifyfbid.sendCode=🌸 𝒀𝒐𝒖𝒓 𝑽𝒆𝒓𝒊𝒇𝒊𝒄𝒂𝒕𝒊𝒐𝒏 𝑪𝒐𝒅𝒆 🌸\n╭──────────────────⬣\n│ 🔑 𝐂𝐨𝐝𝐞 : %1\n│ ⏰ 𝐕𝐚𝐥𝐢𝐝 𝐟𝐨𝐫 : %2 minutes\n╰──────────────────⬣
+verifyfbid.sendCode=🌸 ─── 𝑽𝑬𝑹𝑰𝑭𝑰𝑪𝑨𝑻𝑰𝑶𝑵 ─── 🌸\n╭──────────────────⬣\n│ 🔑 𝐂𝐨𝐝𝐞: %1\n│ ⏰ 𝐕𝐚𝐥𝐢𝐝: %2 𝐦𝐢𝐧\n╰──────────────────⬣
 
 # utils.js
-utils.errorOccurred=❌ 🌸 An error occurred:\n\n%1
+utils.errorOccurred=❌ An error occurred:\n\n%1
 
 # for command
-command.restartedBot=🌸 𝑨𝒍𝒊𝒚𝒂 𝑩𝒐𝒕 𝑹𝒆𝒔𝒕𝒂𝒓𝒕𝒆𝒅 𝑺𝒖𝒄𝒄𝒆𝒔𝒔𝒇𝒖𝒍𝒍𝒚! ✨💖
+command.restartedBot=✨ 𝐀𝐥𝐢𝐲𝐚 𝐁𝐨𝐭 restarted successfully
 
 # dashboard/app.js
-app.googleApiRefreshTokenExpired=🌷 Google API token expired, please get a new token! ✨
-app.tooManyRequests=🌸 Too many requests! Try again later
-app.notPermissionChangeFbstate=❌ You don't have permission to change fbstate!
-app.notFoundFbstate=🌸 Please enter fbstate! 🌷
-app.changedFbstateSuccess=✨ Changed fbstate successfully! 🌸
-app.serverError=Server error occurred, please try again later!
+app.googleApiRefreshTokenExpired=❌ Google API token expired, get a new one
+app.tooManyRequests=❌ Too many requests, try again later
+app.notPermissionChangeFbstate=❌ You don't have permission to change fbstate
+app.notFoundFbstate=❌ Please enter fbstate
+app.changedFbstateSuccess=✨ fbstate changed
+app.serverError=❌ Server error, try again later
