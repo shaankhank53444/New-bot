@@ -2,6 +2,47 @@ const fs = require("fs-extra");
 const nullAndUndefined = [undefined, null];
 const leven = require('leven');
 
+// ---- Concurrency helpers (so many groups can be handled at the same time) ----
+// Dedupe simultaneous creation of the same user/thread record
+const pendingUserCreate = new Map();
+const pendingThreadCreate = new Map();
+
+function createOnce(map, key, creator) {
+	if (map.has(key)) return map.get(key);
+	const p = Promise.resolve()
+		.then(creator)
+		.finally(() => map.delete(key));
+	map.set(key, p);
+	return p;
+}
+
+// Analytics: count in memory and flush in one batch (avoids lost updates from parallel read-modify-write)
+const analyticsBuffer = {};
+let analyticsFlushTimer = null;
+let analyticsFlushing = false;
+
+function trackAnalytics(globalData, commandName) {
+	analyticsBuffer[commandName] = (analyticsBuffer[commandName] || 0) + 1;
+	if (analyticsFlushTimer) return;
+	analyticsFlushTimer = setTimeout(async () => {
+		analyticsFlushTimer = null;
+		if (analyticsFlushing) return;
+		analyticsFlushing = true;
+		try {
+			const pending = { ...analyticsBuffer };
+			for (const k of Object.keys(pending)) delete analyticsBuffer[k];
+			const analytics = await globalData.get("analytics", "data", {});
+			for (const [name, count] of Object.entries(pending))
+				analytics[name] = (analytics[name] || 0) + count;
+			await globalData.set("analytics", analytics, "data");
+		} catch (err) {
+			// silent: analytics must never break command handling
+		} finally {
+			analyticsFlushing = false;
+		}
+	}, 3000);
+}
+
 function getType(obj) {
 	return Object.prototype.toString.call(obj).slice(8, -1);
 }
@@ -189,11 +230,11 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 		let userData = global.db.allUserData.find(u => u.userID == senderID);
 
 		if (!userData && !isNaN(senderID))
-			userData = await usersData.create(senderID);
+			userData = await createOnce(pendingUserCreate, senderID, () => usersData.create(senderID));
 
 		if (!threadData && !isNaN(threadID)) {
 			if (global.temp.createThreadDataError.includes(threadID)) return;
-			threadData = await threadsData.create(threadID);
+			threadData = await createOnce(pendingThreadCreate, threadID, () => threadsData.create(threadID));
 			global.db.receivedTheFirstMessage[threadID] = true;
 		} else {
 			if (
@@ -236,11 +277,18 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 			let isPrefixlessCall = false;
 			let cleanBody = body;
 
-			const npxConfig = threadData.data?.npxConfig || { all: false, commands: [], roles: [] };
+			const rawNpx = threadData.data?.npxConfig || {};
+			const npxConfig = {
+				all: rawNpx.all === true,
+				commands: Array.isArray(rawNpx.commands) ? rawNpx.commands : [],
+				roles: Array.isArray(rawNpx.roles) ? rawNpx.roles : []
+			};
 			
 			if (body.startsWith(prefix)) {
 				cleanBody = body.slice(prefix.length).trim();
 			} else {
+				// Prefix is required for EVERY user (developer included).
+				// Prefix-less calls only work when the group admin enabled them via npx.
 				const firstWord = body.trim().split(/ +/)[0].toLowerCase();
 				const targetCmd = GoatBot.commands.get(firstWord) || GoatBot.commands.get(GoatBot.aliases.get(firstWord));
 				
@@ -250,7 +298,7 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 					const canRunByCmd = npxConfig.commands.includes(realName);
 					const canRunByRole = npxConfig.roles.includes(role);
 
-					if (role >= 4 || canRunByAll || canRunByCmd || canRunByRole) {
+					if (canRunByAll || canRunByCmd || canRunByRole) {
 						isPrefixlessCall = true;
 						cleanBody = body.trim();
 					} else {
@@ -349,12 +397,7 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 			isUserCallCommand = true;
 
 			try {
-				(async () => {
-					const analytics = await globalData.get("analytics", "data", {});
-					if (!analytics[commandName]) analytics[commandName] = 0;
-					analytics[commandName]++;
-					await globalData.set("analytics", analytics, "data");
-				})();
+				trackAnalytics(globalData, commandName);
 
 				createMessageSyntaxError(commandName);
 				const getText2 = createGetText2(langCode, `${process.cwd()}/languages/cmds/${langCode}.js`, prefix, command);
