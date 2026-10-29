@@ -13,7 +13,7 @@ module.exports = {
 		}
 	},
 
-	onStart: async ({ threadsData, message, event, api, client, getLang }) => {
+	onStart: async ({ threadsData, message, event, api, prefix, getLang }) => {
 		if (event.logMessageType === "log:subscribe") {
 			const { threadID, logMessageData } = event;
 			const threadData = await threadsData.get(threadID);
@@ -27,7 +27,6 @@ module.exports = {
 				if (findUser && findUser.list && findUser.list.length >= 3) {
 					const userName = user.fullName;
 					const uid = user.userFbId;
-					const prefix = client.getPrefix(threadID);
 
 					try {
 						await message.send({
