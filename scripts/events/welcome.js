@@ -12,7 +12,7 @@ module.exports = {
 		}
 	},
 
-	onStart: async function ({ api, usersData, threadsData, message, event, prefix }) {
+	onStart: async function ({ api, usersData, threadsData, message, event, prefix, getLang }) {
 		if (event.logMessageType === "log:subscribe") {
 			const threadID = event.threadID;
 			const threadInfo = await threadsData.get(threadID) || {};
@@ -40,4 +40,4 @@ module.exports = {
 		}
 	}
 };
-
+	
