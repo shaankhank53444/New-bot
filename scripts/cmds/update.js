@@ -3,23 +3,39 @@ const path = require("path");
 module.exports = {
   config: {
     name: "update",
-    version: "4.0.2",
-    author: "Mr.king",
+    version: "4.1.0",
+    author: "𝔐𝔯.𝔎𝔦𝔫𝔤",
     countDown: 5,
     role: 4,
-    description: { en: "Update Aliya Official V4 from its verified update manifest" },
+    shortDescription: "Update Aliya Official V4 from its verified update manifest",
     category: "owner",
-    guide: { en: "   {pn}" }
+    guide: { en: "{p}update" }
   },
 
-  onStart: async function ({ message }) {
+  onStart: async function ({ message, api, event }) {
+    if (api && typeof api.setMessageReaction === "function") {
+      api.setMessageReaction("⌛️", event.messageID, () => {}, true);
+    }
+
     try {
-      await message.reply("Checking for Aliya V4 updates...");
-      const updaterPath = require.resolve(path.resolve(__dirname, "../../updater.js"));
-      delete require.cache[updaterPath];
+      await message.reply("🌸 Checking for Aliya V4 updates from verified repository...");
+      
+      const updaterPath = path.resolve(__dirname, "../../updater.js");
+      if (require.cache[updaterPath]) {
+        delete require.cache[updaterPath];
+      }
+      
       require(updaterPath);
+
+      if (api && typeof api.setMessageReaction === "function") {
+        api.setMessageReaction("✅️", event.messageID, () => {}, true);
+      }
     } catch (err) {
-      return message.reply("Update failed: " + (err.message || err));
+      if (api && typeof api.setMessageReaction === "function") {
+        api.setMessageReaction("❌️", event.messageID, () => {}, true);
+      }
+      return message.reply("❌ Update failed: " + (err.message || err));
     }
   }
 };
+        
