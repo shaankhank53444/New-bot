@@ -1,7 +1,7 @@
 /**
  * @author Mr.king x Aliya
- * Aliya Official V4 Engine
- * Ultra Fast Auto-Recovery Launcher
+ * 🌸 Aliya Official V4 Engine 🦢
+ * 🦋 Multi-GC Optimized & Ultra Fast Auto-Recovery Launcher 🌷
  */
 
 "use strict";
@@ -29,12 +29,12 @@ const C = {
 };
 
 const BANNER = `${C.magenta}${C.bold}
-  █████╗ ██╗     ██╗██╗   ██╗ █████╗     ██╗   ██╗██╗  ██╗
- ██╔══██╗██║     ██║╚██╗ ██╔╝██╔══██╗    ██║   ██║██║  ██║
- ███████║██║     ██║ ╚████╔╝ ███████║    ██║   ██║███████║
- ██╔══██║██║     ██║  ╚██╔╝  ██╔══██║    ╚██╗ ██╔╝╚════██║
- ██║  ██║███████╗██║   ██║   ██║  ██║     ╚████╔╝      ██║
- ╚═╝  ╚═╝╚══════╝╚═╝   ╚═╝   ╚═╝  ╚═╝      ╚═══╝       ╚═╝${C.reset}
+  🌸█████╗ ██╗     ██╗██╗   ██╗ █████╗     ██╗   ██╗██╗  ██╗🦢
+  🌷██╔══██╗██║     ██║╚██╗ ██╔╝██╔══██╗    ██║   ██║██║  ██║🌷
+  🦋███████║██║     ██║ ╚████╔╝ ███████║    ██║   ██║███████║🦋
+  🐇██╔══██║██║     ██║  ╚██╔╝  ██╔══██║    ╚██╗ ██╔╝╚════██║🐇
+  🌸██║  ██║███████╗██║   ██║   ██║  ██║     ╚████╔╝      ██║🌸
+  🦢╚═╝  ╚═╝╚══════╝╚═╝   ╚═╝   ╚═╝  ╚═╝      ╚═══╝       ╚═╝🦢${C.reset}
 `;
 
 let child = null;
@@ -46,10 +46,7 @@ let paused = false; // crash-guard pause (watchdog must not interfere)
 let crashCount = 0;
 let lastCrashTime = 0;
 
-// Smart Port Picker
-// - Uses process.env.PORT (Render/Koyeb/Railway) or 8080 by default.
-// - If busy, retries a few times, then falls back to a random free port.
-// - The chosen port is passed to the bot as process.env.PORT.
+// Smart Port Picker for Multi-GC / Multi-Process handling
 const PREFERRED_PORT = Number(process.env.PORT) || 8080;
 
 function now() {
@@ -104,11 +101,11 @@ function printBanner(port) {
     const row = (text) => ` ${C.cyan}║${C.reset} ${text.padEnd(57)} ${C.cyan}║${C.reset}`;
     console.log("\n" + BANNER);
     console.log(` ${C.cyan}╔${line}╗${C.reset}`);
-    console.log(row(`${C.bold}👑 ALIYA OFFICIAL V4 ENGINE${C.reset}`.padEnd(57 + 8)));
-    console.log(row(`👤 DEVELOPER    : Mr.king`));
-    console.log(row(`🔄 LAUNCH COUNT : ${restartCount}`));
-    console.log(row(`🌐 PORT         : ${port}`));
-    console.log(row(`⚡ MODE         : Multi-Group Ready`));
+    console.log(row(`${C.bold}🌸 👑 ALIYA OFFICIAL V4 ENGINE 🦢${C.reset}`.padEnd(57 + 8)));
+    console.log(row(`👤 DEVELOPER    : Mr.king 🦋`));
+    console.log(row(`🔄 LAUNCH COUNT : ${restartCount} 🚀`));
+    console.log(row(`🌐 PORT         : ${port} 🌐`));
+    console.log(row(`⚡ MODE         : Multi-GC Heavy Load Ready 🌷`));
     console.log(` ${C.cyan}╚${line}╝${C.reset}\n`);
 }
 
@@ -149,8 +146,10 @@ async function startBot() {
             env: {
                 ...process.env,
                 PORT: String(botPort),
-                // Bigger libuv thread pool => many groups can do file/network work in parallel
-                UV_THREADPOOL_SIZE: process.env.UV_THREADPOOL_SIZE || "32"
+                // 🌸 Extended UV_THREADPOOL_SIZE for handling 10-20+ GCs smoothly without lag
+                UV_THREADPOOL_SIZE: process.env.UV_THREADPOOL_SIZE || "128",
+                // 🦢 V8 Node.js memory optimization flags to prevent GC overload and crashes
+                NODE_OPTIONS: process.env.NODE_OPTIONS || "--max-old-space-size=4096 --expose-gc"
             }
         });
     } catch (error) {
@@ -223,7 +222,7 @@ function scheduleRestart() {
     }, RESTART_DELAY);
 }
 
-// Watchdog Anti-Hang Protection
+// Watchdog Anti-Hang Protection for Multi-GC Stability
 setInterval(() => {
     if (!shuttingDown && !paused && !isChildRunning() && !restartTimer && !starting) {
         log("⚠️", "WATCHDOG", "Bot is inactive! Forcing start...", C.yellow);
