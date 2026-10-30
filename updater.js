@@ -16,8 +16,8 @@ const currentConfig = require('./config.json');
 const langCode = currentConfig.language || "en";
 const execSync = require('child_process').execSync;
 
-const REPO_OWNER = "masterjiraya890-svg";
-const REPO_NAME = "Aliya-Official--v4";
+const REPO_OWNER = "mrking-svg";
+const REPO_NAME = "Aliya-Official-V4-personal";
 const BRANCH = "main";
 
 function parseVersion(version) {
@@ -293,7 +293,7 @@ fs.copyFileSync = function (src, dest) {
 		const { data: rawPackageJSON } = await axios.get(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/package.json`);
 		fs.writeFileSync(`${process.cwd()}/package.json`, typeof rawPackageJSON === "string" ? rawPackageJSON : JSON.stringify(rawPackageJSON, null, 2));
 
-		log.info("UPDATE", getText("updater", "updateSuccess", !reinstallDependencies ? getText("updater", "restartToApply") : ""));
+		log.info("UPDATE", getText("updater", "updateSuccess", !reinstallDependencies ? getText("updater", "restartToApply"] : ""));
 
 		if (reinstallDependencies) {
 			log.info("UPDATE", getText("updater", "installingPackages"));
@@ -306,4 +306,3 @@ fs.copyFileSync = function (src, dest) {
 		log.error("UPDATE", "Failed to update Aliya Official v4:", err.message || err);
 	}
 })();
-						
