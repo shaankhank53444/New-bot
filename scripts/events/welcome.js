@@ -1,7 +1,7 @@
 module.exports = {
 	config: {
 		name: "welcome",
-		version: "5.0.0",
+		version: "6.0.0",
 		author: "𝔐𝔯.𝔎𝔦𝔫𝔤",
 		category: "events"
 	},
@@ -9,14 +9,14 @@ module.exports = {
 	langs: {
 		en: {
 			welcomeMsg: 
-				`🌸 𝖂𝖊𝖑𝖈𝖔𝖒𝖊 𝖙𝖔 𝖙𝖍𝖊 𝕲𝖗𝖔𝖚𝖕 🦢\n\n` +
-				`✨ 𝖌𝖗𝖔𝖚𝖕 𝗻𝗮𝗺𝗲 : %1\n` +
-				`📌 𝘀𝘆𝘀𝘁𝗲𝗺 𝗽𝗿𝗲𝗳𝗶𝘅 : %2\n` +
-				`🔗 𝗴𝗿𝗼𝘂𝗽 𝗽𝗿𝗲𝗳𝗶𝘅 : %3\n\n` +
-				`👋 𝖍𝖊𝖑𝖑𝖔 @%4, welcome to the family! Enjoy your time here. 🎉\n\n` +
-				`╭───────────────⬣\n` +
-				`│ 𝐌𝐚𝐝𝐞 𝐰𝐢𝐭𝐡 🤍 𝐛𝐲 --𝔐𝔯.𝔎𝔦𝔫𝔤\n` +
-				`╰───────────────⬣`
+				"🌸 𝖂𝖊𝖑𝖈𝖔𝖒𝖊 𝖙𝖔 𝖙𝖍𝖊 𝕲𝖗𝖔𝖚𝖕 🦢\n\n" +
+				"✨ 𝖌𝖗𝖔𝖚𝖕 𝗻𝗮𝗺𝗲 : %1\n" +
+				"📌 𝘀𝘆𝘀𝘁𝗲𝗺 𝗽𝗿𝗲𝗳𝗶𝘅 : %2\n" +
+				"🔗 𝗴𝗿𝗼𝘂𝗽 𝗽𝗿𝗲𝗳𝗶𝘅 : %3\n\n" +
+				"👋 𝖍𝖊𝖑𝖑𝖔 @%4, welcome to the family! Enjoy your time here. 🎉\n\n" +
+				"╭───────────────⬣\n" +
+				"│ 𝐌𝐚𝐝𝐞 𝐰𝐢𝐭𝐡 🤍 𝐛𝐲 --𝔐𝔯.𝔎𝔦𝔫𝔤\n" +
+				"╰───────────────⬣"
 		}
 	},
 
@@ -32,8 +32,11 @@ module.exports = {
 			const addedParticipants = event.logMessageData.addedParticipants || [];
 			for (const participant of addedParticipants) {
 				const userID = participant.userFbId;
-				const userName = participant.fullName || await usersData.getName(userID) || "User";
+				
+				// Bot nije join korle welcome message dibe na
+				if (userID === api.getCurrentUserID()) continue;
 
+				const userName = participant.fullName || await usersData.getName(userID) || "User";
 				const text = getLang("welcomeMsg", threadName, systemPrefix, groupPrefix, userName);
 				
 				const axios = require("axios");
