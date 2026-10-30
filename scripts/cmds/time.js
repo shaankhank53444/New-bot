@@ -1,45 +1,51 @@
 const axios = require("axios");
-const fs = require("fs");
+const fs = require("fs-extra");
 const path = require("path");
 
 module.exports = {
   config: {
     name: "time",
-    version: "1.0",
-    author: "Saimx69x",
+    version: "2.0.0",
+    author: "𝔐𝔯.𝔎𝔦𝔫𝔤",
     role: 0,
     countDown: 3,
     shortDescription: "Fetches stylish time card from API",
     category: "tools",
-    guide: "/time - Get current neon time card"
+    guide: { en: "{p}time - Get current neon time card" }
   },
 
-  onStart: async ({ message }) => {
-    try {
-      const wait = await message.reply("⚡ Fetching time card...");
+  onStart: async ({ message, api, event }) => {
+    if (api && typeof api.setMessageReaction === "function") {
+      api.setMessageReaction("⌛️", event.messageID, () => {}, true);
+    }
 
+    try {
       const apiUrl = "https://xsaim8x-xxx-api.onrender.com/api/time";
-      const response = await axios.get(apiUrl, { responseType: "stream" });
+      const response = await axios.get(apiUrl, { responseType: "arraybuffer" });
 
       const tmpDir = path.join(__dirname, "cache");
-      if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir);
+      await fs.ensureDir(tmpDir);
 
       const filePath = path.join(tmpDir, `time_card_${Date.now()}.png`);
-      const writer = fs.createWriteStream(filePath);
+      fs.writeFileSync(filePath, Buffer.from(response.data));
 
-      response.data.pipe(writer);
+      if (api && typeof api.setMessageReaction === "function") {
+        api.setMessageReaction("✅️", event.messageID, () => {}, true);
+      }
 
-      await new Promise((resolve, reject) => {
-        writer.on("finish", resolve);
-        writer.on("error", reject);
-      });
-
-      await message.unsend(wait.messageID);
-      return message.reply({ attachment: fs.createReadStream(filePath) });
+      const signature = `╭───────────────⬣\n│ 𝐌𝐚𝐝𝐞 𝐰𝐢𝐭𝐡 🤍 by --𝔐𝔯.𝔎𝔦𝔫𝔤\n╰───────────────⬣`;
+      
+      return message.reply({
+        body: `⏰ 𝐍𝐄𝐎𝐍 𝐓𝐈𝐌𝐄 𝐂𝐀𝐑𝐃 🌸\n\n${signature}`,
+        attachment: fs.createReadStream(filePath)
+      }, () => fs.unlinkSync(filePath));
 
     } catch (err) {
-      console.error("Time command error:", err.message);
-      return message.reply("❌ Failed to fetch time card.");
+      if (api && typeof api.setMessageReaction === "function") {
+        api.setMessageReaction("❌️", event.messageID, () => {}, true);
+      }
+      return message.reply("❌ Failed to fetch time card, please try again!");
     }
   }
 };
+    
